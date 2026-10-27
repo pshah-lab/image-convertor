@@ -1,62 +1,42 @@
-# Image Converter
+# Image Convertor
 
-This project is a simple Node.js script that converts images from an input directory to WebP and AVIF formats in an output directory. It uses the `sharp` library for high-performance image processing.
+A privacy-first image conversion web app. Images are decoded, transformed, and encoded entirely in the user’s browser—there is no image-upload endpoint or database.
 
-## Features
+## Included in this MVP
 
-*   Converts images to WebP and AVIF formats.
-*   Allows specifying output quality for converted images.
-*   Automatically creates the output directory if it doesn't exist.
+- Multiple-file drag/drop or picker upload
+- JPEG, PNG, WebP, AVIF, and GIF input validation (GIFs use their first frame)
+- Browser-capability-aware WebP, JPEG, PNG, and AVIF conversion
+- Quality control, aspect-ratio-preserving width resize, and JPEG background colour
+- Individual downloads and ZIP download for a batch
+- Real original/output sizes and percentage savings
+- Cleanup of preview URLs when files are removed or the app unmounts
+- A restrictive CSP that disallows outgoing connections
 
-## Prerequisites
+## Run locally
 
-Before you begin, ensure you have Node.js installed on your system.
+Requires Node.js 20+ and pnpm.
 
-## Installation
+```bash
+pnpm install --ignore-workspace
+pnpm dev
+```
 
-1.  Clone this repository or download the project files.
-2.  Navigate to the project directory in your terminal:
-    ```bash
-    cd image-converter
-    ```
-3.  Install the necessary dependencies:
-    ```bash
-    npm install
-    ```
+Open `http://localhost:3000`.
 
-## Usage
+```bash
+pnpm test
+pnpm build
+```
 
-1.  Place your input images in the `input/` directory. (Note: The `inputDir` and `outputDir` variables in `index.js` currently use placeholder paths. You will need to update these variables in `index.js` to point to your actual input and output directories.)
-2.  Run the conversion script. You can optionally specify a quality parameter (0-100). If not specified, it defaults to 80.
+## Browser support and limitations
 
-    ```bash
-    node index.js [quality]
-    ```
+The app uses `createImageBitmap`, Canvas, and `canvas.toBlob`. JPEG, PNG, and WebP output work in current Chromium, Firefox, and Safari releases. AVIF encode support is browser-dependent: the app detects it at conversion time and clearly reports when it is unavailable. Animated GIFs are accepted but only their first frame is processed. Very large files (>25 MB) and images (>40 megapixels) are rejected to protect browser memory.
 
-    **Examples:**
+## Deployment
 
-    *   Convert with default quality (80):
-        ```bash
-        node index.js
-        ```
-    *   Convert with 90% quality:
-        ```bash
-        node index.js 90
-        ```
+Import this folder into Vercel and use the default Next.js build command (`pnpm build`). The application is static-compatible and contains no API routes or server image processing. Before publishing, add your real production URL as the metadata base/canonical URL.
 
-3.  The converted images will be saved in the `output/` directory.
+## Privacy verification
 
-## Project Structure
-
-*   `index.js`: The main script for image conversion.
-*   `input/`: Directory to place your original images for conversion.
-*   `output/`: Directory where the converted WebP and AVIF images will be saved.
-*   `package.json`: Defines project metadata and dependencies.
-
-## Dependencies
-
-*   `sharp`: High-performance Node.js image processing, the fastest way to resize JPEG, PNG, WebP, AVIF and TIFF images.
-
-## License
-
-This project is licensed under the ISC License.
+There are no `fetch`, XHR, analytics, storage, server actions, or API route calls in the conversion flow. The page’s Content Security Policy permits `connect-src 'self'`, and image previews use local `blob:` URLs. A browser network-panel check during upload should show no request carrying image content; that check remains a recommended pre-launch release test.

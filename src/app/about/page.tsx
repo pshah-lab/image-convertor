@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function About() { return <main className="info-page"><nav><Link className="brand" href="/">IMAGE<span>CONVERTOR</span></Link><Link href="/">Back to converter</Link></nav><article><p className="eyebrow">ABOUT</p><h1>Useful image tools, without the upload.</h1><p>Image Convertor is designed for people who need a quick, dependable way to adapt visual assets without giving a third party a copy of their work.</p><Link className="button" href="/#workspace">Start converting <span>↓</span></Link></article></main>; }
